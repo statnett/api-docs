@@ -1,0 +1,788 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.2
+  creationTimestamp: null
+  name: stasjobs.stas.statnett.no
+spec:
+  group: stas.statnett.no
+  names:
+    categories:
+    - all
+    kind: StasJob
+    listKind: StasJobList
+    plural: stasjobs
+    shortNames:
+    - sjob
+    - sjobs
+    singular: stasjob
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: StasJob is the Schema for the stasjobs API.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: StasJobSpec defines the desired state of StasJob
+            properties:
+              args:
+                description: 'Arguments to the entrypoint. The docker image''s CMD
+                  is used if this is not provided. Variable references $(VAR_NAME)
+                  are expanded using the container''s environment. If a variable cannot
+                  be resolved, the reference in the input string will be unchanged.
+                  The $(VAR_NAME) syntax can be escaped with a double $, ie: $$(VAR_NAME).
+                  Escaped references will never be expanded, regardless of whether
+                  the variable exists or not.'
+                items:
+                  maxLength: 32767
+                  type: string
+                type: array
+              command:
+                description: 'Entrypoint array. Not executed within a shell. The docker
+                  image''s ENTRYPOINT is used if this is not provided. Variable references
+                  $(VAR_NAME) are expanded using the container''s environment. If
+                  a variable cannot be resolved, the reference in the input string
+                  will be unchanged. The $(VAR_NAME) syntax can be escaped with a
+                  double $, ie: $$(VAR_NAME). Escaped references will never be expanded,
+                  regardless of whether the variable exists or not.'
+                items:
+                  maxLength: 32767
+                  type: string
+                type: array
+              concurrencyPolicy:
+                default: Forbid
+                description: ConcurrencyPolicy specifies how to treat concurrent executions
+                  of a Job.
+                enum:
+                - Allow
+                - Forbid
+                - Replace
+                type: string
+              env:
+                description: List of environment variables. An environment variable's
+                  value can either be explicitly set (value), or pulled from another
+                  source (valueFrom).
+                items:
+                  description: EnvVar represents an environment variable present in
+                    a Container.
+                  properties:
+                    name:
+                      description: Name of the environment variable. Must be a C_IDENTIFIER.
+                      type: string
+                    value:
+                      description: 'Variable references $(VAR_NAME) are expanded using
+                        the previously defined environment variables in the container
+                        and any service environment variables. If a variable cannot
+                        be resolved, the reference in the input string will be unchanged.
+                        Double $$ are reduced to a single $, which allows for escaping
+                        the $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the
+                        string literal "$(VAR_NAME)". Escaped references will never
+                        be expanded, regardless of whether the variable exists or
+                        not. Defaults to "".'
+                      type: string
+                    valueFrom:
+                      description: Source for the environment variable's value. Cannot
+                        be used if value is not empty.
+                      properties:
+                        configMapKeyRef:
+                          description: Selects a key of a ConfigMap.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                TODO: Add other useful fields. apiVersion, kind, uid?'
+                              type: string
+                            optional:
+                              description: Specify whether the ConfigMap or its key
+                                must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        fieldRef:
+                          description: 'Selects a field of the pod: supports metadata.name,
+                            metadata.namespace, `metadata.labels[''<KEY>'']`, `metadata.annotations[''<KEY>'']`,
+                            spec.nodeName, spec.serviceAccountName, status.hostIP,
+                            status.podIP, status.podIPs.'
+                          properties:
+                            apiVersion:
+                              description: Version of the schema the FieldPath is
+                                written in terms of, defaults to "v1".
+                              type: string
+                            fieldPath:
+                              description: Path of the field to select in the specified
+                                API version.
+                              type: string
+                          required:
+                          - fieldPath
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        resourceFieldRef:
+                          description: 'Selects a resource of the container: only
+                            resources limits and requests (limits.cpu, limits.memory,
+                            limits.ephemeral-storage, requests.cpu, requests.memory
+                            and requests.ephemeral-storage) are currently supported.'
+                          properties:
+                            containerName:
+                              description: 'Container name: required for volumes,
+                                optional for env vars'
+                              type: string
+                            divisor:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Specifies the output format of the exposed
+                                resources, defaults to "1"
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            resource:
+                              description: 'Required: resource to select'
+                              type: string
+                          required:
+                          - resource
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        secretKeyRef:
+                          description: Selects a key of a secret in the pod's namespace
+                          properties:
+                            key:
+                              description: The key of the secret to select from.  Must
+                                be a valid secret key.
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                TODO: Add other useful fields. apiVersion, kind, uid?'
+                              type: string
+                            optional:
+                              description: Specify whether the Secret or its key must
+                                be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                      type: object
+                  required:
+                  - name
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
+              envFrom:
+                description: List of ConfigMap / Secret resources that will have their
+                  key-value pairs configured as container environment variables.
+                items:
+                  description: ConfigMap / Secret resource that will have its key-value
+                    pairs configured as container environment variables. Either ConfigMap
+                    or Secret are required. Only resources in the same namespace as
+                    the Application may be referenced.
+                  properties:
+                    configMapRef:
+                      description: ConfigMapRef is the name of the ConfigMapRef resource.
+                      properties:
+                        name:
+                          description: Name of the ConfigMap to select from.
+                          maxLength: 253
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    prefix:
+                      description: Prefix is an optional identifier to prepend to
+                        each key in the Secret/ConfigMap. Must be a C_IDENTIFIER.
+                      maxLength: 1023
+                      pattern: ^([-._a-zA-Z][-._a-zA-Z0-9]*)?$
+                      type: string
+                    secretRef:
+                      description: SecretRef is the name of the SecretRef resource.
+                      properties:
+                        name:
+                          description: Name of the Secret to select from.
+                          maxLength: 253
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                      required:
+                      - name
+                      type: object
+                  type: object
+                type: array
+              failedJobsHistoryLimit:
+                default: 1
+                description: FailedJobsHistoryLimit is the number of failed finished
+                  jobs to retain.
+                format: int32
+                minimum: 0
+                type: integer
+              filesFrom:
+                description: List of ConfigMap / Secret / PersistentVolumeClaim /
+                  EmptyDir that will be mounted into the container as files.
+                items:
+                  description: FilesFromSource is a resource reference that will have
+                    its contents mounted into the container as files. Exactly one
+                    of ConfigMapRef, SecretRef, PVCRef or EmptyDir is required. The
+                    resource must exist in the same namespace as the Application.
+                  properties:
+                    configMapRef:
+                      properties:
+                        key:
+                          description: 'Key references a key under `.data` for the
+                            ConfigMap that should be mounted at `mountPath`. Note:
+                            Files will not receive updates from ConfigMap when using
+                            `key`, so it is recommended to set `.spec.deploymentStrategy.redeployOnConfigChange`
+                            to `true` if using `key`.'
+                          maxLength: 253
+                          minLength: 1
+                          type: string
+                        name:
+                          description: Name of the ConfigMap resource.
+                          maxLength: 253
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    emptyDir:
+                      type: object
+                    mountPath:
+                      description: MountPath to where files will be mounted.
+                      maxLength: 1023
+                      minLength: 1
+                      type: string
+                    pvcRef:
+                      properties:
+                        name:
+                          description: Name of the PersistentVolumeClaim resource.
+                          maxLength: 253
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                        subPath:
+                          description: 'SubPath references a path within the PersistentVolume
+                            that should be mounted at `mountPath`. Note: Files will
+                            not receive updates from PersistentVolume when using `subPath`,
+                            so it is recommended to set `.spec.deploymentStrategy.redeployOnConfigChange`
+                            to `true` if using `subPath`.'
+                          maxLength: 1023
+                          minLength: 1
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    secretRef:
+                      properties:
+                        key:
+                          description: 'Key references a key under `.data` for the
+                            Secret that should be mounted at `mountPath`. Note: Files
+                            will not receive updates from Secret when using `key`,
+                            so it is recommended to set `.spec.deploymentStrategy.redeployOnConfigChange`
+                            to `true` if using `key`.'
+                          maxLength: 253
+                          minLength: 1
+                          type: string
+                        name:
+                          description: Name of the Secret resource.
+                          maxLength: 253
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                      required:
+                      - name
+                      type: object
+                  required:
+                  - mountPath
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - mountPath
+                x-kubernetes-list-type: map
+              image:
+                description: Container image name.
+                maxLength: 1023
+                minLength: 1
+                type: string
+              imagePullPolicy:
+                default: IfNotPresent
+                description: Image pull policy.
+                enum:
+                - Always
+                - Never
+                - IfNotPresent
+                type: string
+              logging:
+                description: Logging configures log forwarding from the Pod.
+                properties:
+                  enabled:
+                    default: true
+                    description: Enabled determines whether logging is enabled.
+                    type: boolean
+                  index:
+                    description: Index specifies the log index to forward logs to.
+                    maxLength: 127
+                    minLength: 1
+                    type: string
+                  type:
+                    default: Splunk
+                    description: Type describes the sink logging system.
+                    enum:
+                    - Splunk
+                    type: string
+                required:
+                - index
+                type: object
+              metadata:
+                description: Metadata describes the non-runtime (meta) characteristics
+                  of an application.
+                properties:
+                  component:
+                    description: Component is the application role within the system
+                      architecture (e.g., database, server, frontend, machine-learning,
+                      etc.).
+                    maxLength: 63
+                    minLength: 1
+                    pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                    type: string
+                  gitUrl:
+                    description: 'GitUrl is the URL to the Git repository provisioning
+                      this application. Please use the GitLab HTTPS URL. Example:
+                      https://gitlab.statnett.no/stas/k8s-controllers/application-operator.git'
+                    format: uri
+                    maxLength: 1023
+                    pattern: ^https://gitlab.statnett.no
+                    type: string
+                  system:
+                    description: 'System is the short name of the Statnett system
+                      that this application belongs to. Ref. Systemoversikt: https://webapp.statnett.no/systemoversikt'
+                    pattern: ^[a-z0-9]{1,4}$
+                    type: string
+                  version:
+                    description: Version is the current version of the application
+                      (e.g., a semantic version, revision hash, etc.).
+                    maxLength: 63
+                    minLength: 1
+                    pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                    type: string
+                required:
+                - system
+                type: object
+              port:
+                default: 8080
+                description: Port number which is exposed by the application container
+                  and should receive traffic.
+                format: int32
+                maximum: 65535
+                minimum: 1
+                type: integer
+              probes:
+                description: Probes defines application health checks.
+                properties:
+                  liveness:
+                    description: Liveness probes are used by the kubelet to know when
+                      to restart a Container. For example, liveness probes could catch
+                      a deadlock, where an application is running, but unable to make
+                      progress. Restarting a Container in such a state can help to
+                      make the application more available despite bugs. Read more
+                      about this over at the Kubernetes documentation.
+                    properties:
+                      exec:
+                        description: Exec describes a "run in container" action.
+                        properties:
+                          command:
+                            description: Command is the command line to execute inside
+                              the container, the working directory for the command  is
+                              root ('/') in the container's filesystem. The command
+                              is simply exec'd, it is not run inside a shell, so traditional
+                              shell instructions ('|', etc) won't work. To use a shell,
+                              you need to explicitly call out to that shell. Exit
+                              status of 0 is treated as live/healthy and non-zero
+                              is unhealthy.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        description: Minimum consecutive failures for the probe to
+                          be considered failed after having succeeded. Defaults to
+                          36 (startup probe), 3 (readiness probe), 12 (liveness probe).
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      httpGet:
+                        description: HTTPGet describes a HTTP GET request action.
+                        properties:
+                          path:
+                            default: /
+                            description: Path to access on the HTTP server.
+                            minLength: 1
+                            type: string
+                          port:
+                            description: Port to access probe. Defaults to '.spec.port'.
+                            format: int32
+                            maximum: 65535
+                            minimum: 1
+                            type: integer
+                        required:
+                        - path
+                        type: object
+                      initialDelaySeconds:
+                        description: 'Number of seconds after the container has started
+                          before the probe is initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+                          Defaults to 0 (startup probe), 20 (readiness probe), 120
+                          (liveness probe).'
+                        format: int32
+                        minimum: 0
+                        type: integer
+                      periodSeconds:
+                        default: 5
+                        description: How often (in seconds) to perform the probe.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      successThreshold:
+                        default: 1
+                        description: Minimum consecutive successes for the probe to
+                          be considered successful after having failed. Must be 1
+                          for liveness and startup probes.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      timeoutSeconds:
+                        default: 1
+                        description: 'Number of seconds after which the probe times
+                          out. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                        format: int32
+                        minimum: 1
+                        type: integer
+                    type: object
+                  readiness:
+                    description: Readiness probes are used by the kubelet to know
+                      when a Container is ready to start accepting traffic. A Pod
+                      is considered ready when all of its Containers are ready. One
+                      use of this signal is to control which Pods are used as backends
+                      for Services. When a Pod is not ready, it is removed from Service
+                      load balancers. Read more about this over at the Kubernetes
+                      documentation.
+                    properties:
+                      exec:
+                        description: Exec describes a "run in container" action.
+                        properties:
+                          command:
+                            description: Command is the command line to execute inside
+                              the container, the working directory for the command  is
+                              root ('/') in the container's filesystem. The command
+                              is simply exec'd, it is not run inside a shell, so traditional
+                              shell instructions ('|', etc) won't work. To use a shell,
+                              you need to explicitly call out to that shell. Exit
+                              status of 0 is treated as live/healthy and non-zero
+                              is unhealthy.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        description: Minimum consecutive failures for the probe to
+                          be considered failed after having succeeded. Defaults to
+                          36 (startup probe), 3 (readiness probe), 12 (liveness probe).
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      httpGet:
+                        description: HTTPGet describes a HTTP GET request action.
+                        properties:
+                          path:
+                            default: /
+                            description: Path to access on the HTTP server.
+                            minLength: 1
+                            type: string
+                          port:
+                            description: Port to access probe. Defaults to '.spec.port'.
+                            format: int32
+                            maximum: 65535
+                            minimum: 1
+                            type: integer
+                        required:
+                        - path
+                        type: object
+                      initialDelaySeconds:
+                        description: 'Number of seconds after the container has started
+                          before the probe is initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+                          Defaults to 0 (startup probe), 20 (readiness probe), 120
+                          (liveness probe).'
+                        format: int32
+                        minimum: 0
+                        type: integer
+                      periodSeconds:
+                        default: 5
+                        description: How often (in seconds) to perform the probe.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      successThreshold:
+                        default: 1
+                        description: Minimum consecutive successes for the probe to
+                          be considered successful after having failed. Must be 1
+                          for liveness and startup probes.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      timeoutSeconds:
+                        default: 1
+                        description: 'Number of seconds after which the probe times
+                          out. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                        format: int32
+                        minimum: 1
+                        type: integer
+                    type: object
+                  startup:
+                    description: Startup probes are useful for Pods that have containers
+                      that take a long time to start. Rather than tweaking the liveness
+                      probe parameters you can configure a startup probe that probes
+                      the container as it starts up. Configure a startup probe with
+                      a failureThreshold * periodSeconds long enough to cover the
+                      worse case startup time. If specified, no other probes are executed
+                      until this completes successfully. If this probe fails, the
+                      Pod will be restarted, just as if the liveness probe failed.
+                      Read more about this over at the Kubernetes documentation.
+                    properties:
+                      exec:
+                        description: Exec describes a "run in container" action.
+                        properties:
+                          command:
+                            description: Command is the command line to execute inside
+                              the container, the working directory for the command  is
+                              root ('/') in the container's filesystem. The command
+                              is simply exec'd, it is not run inside a shell, so traditional
+                              shell instructions ('|', etc) won't work. To use a shell,
+                              you need to explicitly call out to that shell. Exit
+                              status of 0 is treated as live/healthy and non-zero
+                              is unhealthy.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        description: Minimum consecutive failures for the probe to
+                          be considered failed after having succeeded. Defaults to
+                          36 (startup probe), 3 (readiness probe), 12 (liveness probe).
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      httpGet:
+                        description: HTTPGet describes a HTTP GET request action.
+                        properties:
+                          path:
+                            default: /
+                            description: Path to access on the HTTP server.
+                            minLength: 1
+                            type: string
+                          port:
+                            description: Port to access probe. Defaults to '.spec.port'.
+                            format: int32
+                            maximum: 65535
+                            minimum: 1
+                            type: integer
+                        required:
+                        - path
+                        type: object
+                      initialDelaySeconds:
+                        description: 'Number of seconds after the container has started
+                          before the probe is initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+                          Defaults to 0 (startup probe), 20 (readiness probe), 120
+                          (liveness probe).'
+                        format: int32
+                        minimum: 0
+                        type: integer
+                      periodSeconds:
+                        default: 5
+                        description: How often (in seconds) to perform the probe.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      successThreshold:
+                        default: 1
+                        description: Minimum consecutive successes for the probe to
+                          be considered successful after having failed. Must be 1
+                          for liveness and startup probes.
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      timeoutSeconds:
+                        default: 1
+                        description: 'Number of seconds after which the probe times
+                          out. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                        format: int32
+                        minimum: 1
+                        type: integer
+                    type: object
+                type: object
+              resources:
+                description: When Containers have resources specified, the scheduler
+                  can make better decisions about which nodes to place Pods on.
+                properties:
+                  auto:
+                    description: Auto enables automatic scaling of CPU and/or memory
+                      requests and limits. When enabled, the autoscaler assigns resources
+                      on pod creation and additionally can update them during the
+                      lifetime of the pod by deleting and recreating the pod. Refer
+                      to https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler#readme
+                      for details. When enabled, VPA evicts the pods when all the
+                      following conditions are met -- pod has been running for 12
+                      hours -- has minimum 2 replicas -- absolute resource difference
+                      between requested and recommended >= 10%
+                    properties:
+                      cpu:
+                        default: true
+                        type: boolean
+                      memory:
+                        default: false
+                        type: boolean
+                    type: object
+                  limits:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: Limits describes the maximum amount of compute resources
+                      allowed. Refer to https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+                      for details. Implementation specific default value.
+                    type: object
+                  requests:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: Requests describes the minimum amount of compute
+                      resources required. Refer to https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+                      for details. Implementation specific default value.
+                    type: object
+                type: object
+              schedule:
+                description: The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+                minLength: 0
+                type: string
+              successfulJobsHistoryLimit:
+                default: 3
+                description: SuccessfulJobsHistoryLimit is the number of successful
+                  finished jobs to retain.
+                format: int32
+                minimum: 0
+                type: integer
+              suspend:
+                default: false
+                description: Suspend tells the controller to suspend subsequent executions,
+                  it does not apply to already started executions
+                type: boolean
+            required:
+            - image
+            - metadata
+            - schedule
+            type: object
+          status:
+            description: StasJobStatus defines the observed state of StasJob
+            properties:
+              conditions:
+                description: Conditions represent the latest available observations
+                  of an object's state
+                items:
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource. --- This struct is intended for direct
+                    use as an array at the field path .status.conditions.  For example,
+                    \n type FooStatus struct{ // Represents the observations of a
+                    foo's current state. // Known .status.conditions.type are: \"Available\",
+                    \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge
+                    // +listType=map // +listMapKey=type Conditions []metav1.Condition
+                    `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\"
+                    protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }"
+                  properties:
+                    lastTransitionTime:
+                      description: lastTransitionTime is the last time the condition
+                        transitioned from one status to another. This should be when
+                        the underlying condition changed.  If that is not known, then
+                        using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: message is a human readable message indicating
+                        details about the transition. This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: observedGeneration represents the .metadata.generation
+                        that the condition was set based upon. For instance, if .metadata.generation
+                        is currently 12, but the .status.conditions[x].observedGeneration
+                        is 9, the condition is out of date with respect to the current
+                        state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: reason contains a programmatic identifier indicating
+                        the reason for the condition's last transition. Producers
+                        of specific condition types may define expected values and
+                        meanings for this field, and whether the values are considered
+                        a guaranteed API. The value should be a CamelCase string.
+                        This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        --- Many .condition.type values are consistent across resources
+                        like Available, but because arbitrary conditions can be useful
+                        (see .node.status.conditions), the ability to deconflict is
+                        important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              lastScheduleTime:
+                description: Information when was the last time the job was successfully
+                  scheduled.
+                format: date-time
+                type: string
+              observedGeneration:
+                description: The generation observed by the application operator.
+                format: int64
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
